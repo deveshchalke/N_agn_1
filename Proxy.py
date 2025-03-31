@@ -121,5 +121,14 @@ def main():
                     print("404 detected - skipping cache")
             except:
                 pass
+            ###################################################################
+            # Handle redirects
+            ###################################################################
+            try:
+                headers = response_data.split(b'\r\n\r\n')[0].decode()
+                if "301" in headers or "302" in headers:
+                    print("Redirect detected - forwarding response")
+            except:
+                pass
 
 
