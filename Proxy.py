@@ -132,3 +132,30 @@ def main():
                 pass
 
 
+            ###################################################################
+            # Cache storage
+            ###################################################################
+            cacheable = True
+            try:
+                headers = response_data.split(b'\r\n\r\n')[0].decode().lower()
+                if "cache-control: no-store" in headers or "cache-control: private" in headers:
+                    cacheable = False
+            except:
+                pass
+
+            if cacheable:
+                cacheDir = os.path.dirname(cacheLocation)
+                os.makedirs(cacheDir, exist_ok=True)
+                with open(cacheLocation, 'wb') as f:
+                    f.write(response_data)
+
+            clientSocket.sendall(response_data)
+            originServerSocket.close()
+
+        except Exception as e:
+            print('Processing error:', e)
+        finally:
+            clientSocket.close()
+
+if __name__ == '__main__':
+    main()
