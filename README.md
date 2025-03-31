@@ -1,5 +1,5 @@
 CNA-Programming-Assignment-1
-Programming Assignment 1: HTTP Web Proxy Server Programming Assignment (Python-based) (2025)
+Programming Assignment 1: HTTP Web Proxy Server Programming Assignment 
 
 STEP - 1 (Main Branch)
 - Established a TCP socket using `AF_INET` and `SOCK_STREAM`.
