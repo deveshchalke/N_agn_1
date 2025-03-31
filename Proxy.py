@@ -95,3 +95,21 @@ def main():
 
             if cache_hit:
                 continue
+
+            ###################################################################
+            #Origin server communication 
+            ###################################################################
+            originServerSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            originServerSocket.connect((socket.gethostbyname(hostname), 80))
+            
+            # Forward request
+            origin_request = f"{method} {resource} {version}\r\nHost: {hostname}\r\nConnection: close\r\n\r\n"
+            originServerSocket.sendall(origin_request.encode())
+
+            # Receive response
+            response_data = b''
+            while True:
+                chunk = originServerSocket.recv(BUFFER_SIZE)
+                if not chunk: break
+                response_data += chunk
+
