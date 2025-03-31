@@ -27,4 +27,20 @@ def main():
     except Exception as e:
         print('Server startup failed:', e)
         sys.exit()
+    while True:
+        ###################################################################
+        # Connected to Proxy server
+        ###################################################################
+        try:
+            clientSocket, clientAddress = serverSocket.accept()
+            print(f'Connection from: {clientAddress}')
+        except Exception as e:
+            print('Connection failed:', e)
+            continue
+
+        try:
+            message_bytes = clientSocket.recv(BUFFER_SIZE)
+            if not message_bytes:
+                clientSocket.close()
+                continue
 
