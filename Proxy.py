@@ -112,4 +112,14 @@ def main():
                 chunk = originServerSocket.recv(BUFFER_SIZE)
                 if not chunk: break
                 response_data += chunk
+            ###################################################################
+            # Handle 404 responses
+            ###################################################################
+            try:
+                status_line = response_data.decode().split('\r\n')[0]
+                if "404" in status_line:
+                    print("404 detected - skipping cache")
+            except:
+                pass
+
 
