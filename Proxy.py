@@ -44,3 +44,17 @@ def main():
                 clientSocket.close()
                 continue
 
+            ###################################################################
+            #  Obtained remote homepage/file
+            ###################################################################
+            message = message_bytes.decode('utf-8', errors='replace')
+            request_line = message.split('\r\n')[0]
+            method, URI, version = request_line.split()
+            
+            # URI parsing
+            URI = URI.lstrip('/')
+            URI = re.sub('^http(s?)://', '', URI, count=1)
+            resourceParts = URI.split('/', 1)
+            hostname = resourceParts[0]
+            resource = '/' + resourceParts[1] if len(resourceParts) == 2 else '/'
+
