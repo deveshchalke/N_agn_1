@@ -57,4 +57,41 @@ def main():
             resourceParts = URI.split('/', 1)
             hostname = resourceParts[0]
             resource = '/' + resourceParts[1] if len(resourceParts) == 2 else '/'
+            ###################################################################
+            #  Cache handling
+            ###################################################################
+            cacheLocation = f'./{hostname}{resource}'
+            if cacheLocation.endswith('/'):
+                cacheLocation += 'default'
+                
+            # Cache validation and max-age handling
+            cache_hit = False
+            if os.path.isfile(cacheLocation):
+                try:
+                    file_mtime = os.path.getmtime(cacheLocation)
+                    current_time = time.time()
+                    valid_cache = True
+                    
+                    with open(cacheLocation, 'rb') as cacheFile:
+                        cacheData = cacheFile.read()
+                    
+                    # Max-age validation
+                    header_data = cacheData.split(b"\r\n\r\n", 1)[0]
+                    headers = header_data.decode('utf-8', errors='replace')
+                    for line in headers.split("\r\n"):
+                        if line.lower().startswith("cache-control:"):
+                            if 'max-age' in line:
+                                max_age = int(re.search(r'max-age=(\d+)', line).group(1))
+                                if current_time - file_mtime > max_age:
+                                    valid_cache = False
+                            break
+                    
+                    if valid_cache:
+                        clientSocket.sendall(cacheData)
+                        clientSocket.close()
+                        cache_hit = True
+                except Exception as e:
+                    print('Cache error:', e)
 
+            if cache_hit:
+                continue
